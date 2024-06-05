@@ -73,13 +73,13 @@
                             <value>io.qameta.allure.junit4.AllureJunit4</value>
                         </property>
                     </properties>
-                    <systemProperties>
+                    <systemPropertyVariables>
                         <property>
                             <!-- папка, в которую будут генерироваться отчёты Allure -->
                             <name>allure.results.directory</name>
                             <value>${project.build.directory}/allure-results</value>
                         </property>
-                    </systemProperties>
+                    </systemPropertyVariables>
                 </configuration>
                 <dependencies>
                     <dependency>

@@ -5,38 +5,45 @@ import org.junit.Test;
 import ru.yandex.stellar.burgers.client.UserClient;
 import ru.yandex.stellar.burgers.model.user.AuthorizedUserData;
 import ru.yandex.stellar.burgers.model.user.UserData;
+import ru.yandex.stellar.burgers.service.check.UserCheck;
 
-import static java.net.HttpURLConnection.*;
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static ru.yandex.stellar.burgers.Constants.UserConstants.*;
 
 public class CreateUserTest {
-    public final UserClient userClient = new UserClient();
+    private final UserClient userClient = new UserClient();
+    private final UserCheck userCheck = new UserCheck();
     private String createdUserToken;
+
+    @After
+    public void tearDown() {
+        if (createdUserToken != null) {
+            userCheck.deletedSuccessfully(userClient.deleteUser(createdUserToken));
+        }
+    }
 
     @Test
     public void createdSuccessfully() {
         UserData userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
-        AuthorizedUserData response = userClient
-                .createUser(userData)
-                .assertThat()
-                .statusCode(HTTP_OK)
-                .extract()
-                .body().as(AuthorizedUserData.class);
+        AuthorizedUserData createdUser = userCheck.createdSuccessfully(userClient.createUser(userData));
 
-        assertTrue("Response 'success' field should be true", response.isSuccess());
-        assertFalse("Response access token should not be empty", response.getAccessToken().isEmpty());
-        assertFalse("Response refresh token should not be empty", response.getRefreshToken().isEmpty());
+        assertTrue("Response 'success' field should be true", createdUser.isSuccess());
+        assertFalse("Response access token should not be empty", createdUser.getAccessToken().isEmpty());
+        assertFalse("Response refresh token should not be empty", createdUser.getRefreshToken().isEmpty());
 
-        createdUserToken = response.getAccessToken();
+        createdUserToken = createdUser.getAccessToken();
     }
 
     @Test
     public void createExistingUser() {
         UserData userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
+
+        // first creation
         userClient.createUser(userData);
+        // second creation
         userClient
                 .createUser(userData)
                 .assertThat()
@@ -77,16 +84,4 @@ public class CreateUserTest {
                 .and().body(SUCCESS_JSON_KEY, equalTo(false))
                 .and().body(MESSAGE_JSON_KEY, equalTo(EMPTY_REQUIRED_FIELD_MESSAGE));
     }
-
-    @After
-    public void tearDown() {
-        if (createdUserToken != null)
-            userClient
-                    .deleteUser(createdUserToken)
-                    .assertThat()
-                    .statusCode(HTTP_ACCEPTED)
-                    .and().body(SUCCESS_JSON_KEY, equalTo(true))
-                    .and().body(MESSAGE_JSON_KEY, equalTo(USER_REMOVED_MESSAGE));
-    }
-
 }

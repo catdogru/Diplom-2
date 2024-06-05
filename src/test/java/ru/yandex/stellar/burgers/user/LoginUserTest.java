@@ -7,8 +7,10 @@ import ru.yandex.stellar.burgers.client.UserClient;
 import ru.yandex.stellar.burgers.model.user.AuthorizedUserData;
 import ru.yandex.stellar.burgers.model.user.UserCredentials;
 import ru.yandex.stellar.burgers.model.user.UserData;
+import ru.yandex.stellar.burgers.service.check.UserCheck;
 
-import static java.net.HttpURLConnection.*;
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -16,21 +18,21 @@ import static ru.yandex.stellar.burgers.Constants.UserConstants.*;
 
 public class LoginUserTest {
     private final UserClient userClient = new UserClient();
+    private final UserCheck userCheck = new UserCheck();
     private UserData userData;
     private AuthorizedUserData createdUser;
 
     @Before
     public void setUp() {
         userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
-        createdUser = userClient.createUser(userData)
-                .assertThat()
-                .statusCode(HTTP_OK)
-                .and()
-                .body(SUCCESS_JSON_KEY, equalTo(true))
-                .extract()
-                .body().as(AuthorizedUserData.class);
-
+        createdUser = userCheck.createdSuccessfully(userClient.createUser(userData));
         assertFalse("Access token should not be empty", createdUser.getAccessToken().isEmpty());
+    }
+
+    @After
+    public void tearDown() {
+        if (createdUser.getAccessToken() != null)
+            userCheck.deletedSuccessfully(userClient.deleteUser(createdUser.getAccessToken()));
     }
 
     @Test
@@ -68,16 +70,5 @@ public class LoginUserTest {
                 .statusCode(HTTP_UNAUTHORIZED)
                 .and()
                 .body(MESSAGE_JSON_KEY, equalTo(INCORRECT_CREDENTIALS_MESSAGE));
-    }
-
-    @After
-    public void tearDown() {
-        if (createdUser.getAccessToken() != null)
-            userClient
-                    .deleteUser(createdUser.getAccessToken())
-                    .assertThat()
-                    .statusCode(HTTP_ACCEPTED)
-                    .and().body(SUCCESS_JSON_KEY, equalTo(true))
-                    .and().body(MESSAGE_JSON_KEY, equalTo(USER_REMOVED_MESSAGE));
     }
 }
