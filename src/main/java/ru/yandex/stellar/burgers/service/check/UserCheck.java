@@ -6,7 +6,9 @@ import ru.yandex.stellar.burgers.model.user.AuthorizedUserData;
 import static java.net.HttpURLConnection.HTTP_ACCEPTED;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static ru.yandex.stellar.burgers.Constants.UserConstants.*;
+import static ru.yandex.stellar.burgers.Constants.MESSAGE_JSON_KEY;
+import static ru.yandex.stellar.burgers.Constants.SUCCESS_JSON_KEY;
+import static ru.yandex.stellar.burgers.Constants.UserConstants.USER_REMOVED_MESSAGE;
 
 public class UserCheck {
     public AuthorizedUserData createdSuccessfully(ValidatableResponse createResponse) {

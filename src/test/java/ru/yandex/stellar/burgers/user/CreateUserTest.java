@@ -11,6 +11,8 @@ import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static ru.yandex.stellar.burgers.Constants.MESSAGE_JSON_KEY;
+import static ru.yandex.stellar.burgers.Constants.SUCCESS_JSON_KEY;
 import static ru.yandex.stellar.burgers.Constants.UserConstants.*;
 
 public class CreateUserTest {

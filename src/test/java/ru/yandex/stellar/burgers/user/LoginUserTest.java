@@ -14,6 +14,7 @@ import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static ru.yandex.stellar.burgers.Constants.MESSAGE_JSON_KEY;
 import static ru.yandex.stellar.burgers.Constants.UserConstants.*;
 
 public class LoginUserTest {

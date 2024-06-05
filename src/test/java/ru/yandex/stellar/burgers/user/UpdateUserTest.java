@@ -13,6 +13,8 @@ import static java.net.HttpURLConnection.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static ru.yandex.stellar.burgers.Constants.MESSAGE_JSON_KEY;
+import static ru.yandex.stellar.burgers.Constants.SUCCESS_JSON_KEY;
 import static ru.yandex.stellar.burgers.Constants.UserConstants.*;
 
 public class UpdateUserTest {
