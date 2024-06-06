@@ -22,9 +22,7 @@ public class CreateUserTest {
 
     @After
     public void tearDown() {
-        if (createdUserToken != null) {
-            userCheck.deletedSuccessfully(userClient.deleteUser(createdUserToken));
-        }
+        deleteUser();
     }
 
     @Test
@@ -85,5 +83,11 @@ public class CreateUserTest {
                 .statusCode(HTTP_FORBIDDEN)
                 .and().body(SUCCESS_JSON_KEY, equalTo(false))
                 .and().body(MESSAGE_JSON_KEY, equalTo(EMPTY_REQUIRED_FIELD_MESSAGE));
+    }
+
+    private void deleteUser() {
+        if (createdUserToken != null) {
+            userCheck.deletedSuccessfully(userClient.deleteUser(createdUserToken));
+        }
     }
 }

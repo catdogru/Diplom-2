@@ -25,23 +25,16 @@ public class UpdateUserTest {
 
     @Before
     public void setUp() {
-        beforeUpdateUserData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
-        userForUpdate = userCheck.createdSuccessfully(userClient.createUser(beforeUpdateUserData));
-
-        UserData anotherUserData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
-        anotherExistingUser = userCheck.createdSuccessfully(userClient.createUser(anotherUserData));
-
+        createUserForUpdate();
+        createAnotherExistingUser();
         assertFalse("Access token should not be empty", userForUpdate.getAccessToken().isEmpty());
         assertFalse("Access token should not be empty", anotherExistingUser.getAccessToken().isEmpty());
     }
 
     @After
     public void tearDown() {
-        if (userForUpdate.getAccessToken() != null)
-            userCheck.deletedSuccessfully(userClient.deleteUser(userForUpdate.getAccessToken()));
-
-        if (anotherExistingUser.getAccessToken() != null)
-            userCheck.deletedSuccessfully(userClient.deleteUser(anotherExistingUser.getAccessToken()));
+        deleteUser(userForUpdate);
+        deleteUser(anotherExistingUser);
     }
 
     @Test
@@ -152,5 +145,20 @@ public class UpdateUserTest {
                 .statusCode(HTTP_UNAUTHORIZED)
                 .and().body(SUCCESS_JSON_KEY, equalTo(false))
                 .and().body(MESSAGE_JSON_KEY, equalTo(UNAUTHORIZED_USER_MESSAGE));
+    }
+
+    private void deleteUser(AuthorizedUserData user) {
+        if (user.getAccessToken() != null)
+            userCheck.deletedSuccessfully(userClient.deleteUser(user.getAccessToken()));
+    }
+
+    private void createUserForUpdate() {
+        beforeUpdateUserData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
+        userForUpdate = userCheck.createdSuccessfully(userClient.createUser(beforeUpdateUserData));
+    }
+
+    private void createAnotherExistingUser() {
+        UserData anotherUserData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
+        anotherExistingUser = userCheck.createdSuccessfully(userClient.createUser(anotherUserData));
     }
 }

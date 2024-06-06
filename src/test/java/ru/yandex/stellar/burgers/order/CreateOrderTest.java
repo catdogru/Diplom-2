@@ -41,16 +41,13 @@ public class CreateOrderTest {
 
     @Before
     public void setUp() {
-        availableIngredients = ingredientCheck.receivedSuccessfully(ingredientClient.getIngredients());
-
-        UserData userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
-        userAccessToken = userCheck.createdSuccessfully(userClient.createUser(userData)).getAccessToken();
+        getAvailableIngredients();
+        createUser();
     }
 
     @After
     public void tearDown() {
-        if (userAccessToken != null)
-            userCheck.deletedSuccessfully(userClient.deleteUser(userAccessToken));
+        deleteUser();
     }
 
     @Test
@@ -87,5 +84,19 @@ public class CreateOrderTest {
                 .createOrder(new Ingredients(of(INVALID_INGREDIENT)), userAccessToken)
                 .assertThat()
                 .statusCode(HTTP_INTERNAL_ERROR);
+    }
+
+    private void deleteUser() {
+        if (userAccessToken != null)
+            userCheck.deletedSuccessfully(userClient.deleteUser(userAccessToken));
+    }
+
+    private void createUser() {
+        UserData userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
+        userAccessToken = userCheck.createdSuccessfully(userClient.createUser(userData)).getAccessToken();
+    }
+
+    private void getAvailableIngredients() {
+        availableIngredients = ingredientCheck.receivedSuccessfully(ingredientClient.getIngredients());
     }
 }

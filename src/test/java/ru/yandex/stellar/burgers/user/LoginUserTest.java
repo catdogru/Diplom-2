@@ -21,19 +21,17 @@ public class LoginUserTest {
     private final UserClient userClient = new UserClient();
     private final UserCheck userCheck = new UserCheck();
     private UserData userData;
-    private AuthorizedUserData createdUser;
+    private String userAccessToken;
 
     @Before
     public void setUp() {
-        userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
-        createdUser = userCheck.createdSuccessfully(userClient.createUser(userData));
-        assertFalse("Access token should not be empty", createdUser.getAccessToken().isEmpty());
+        userAccessToken = createUser().getAccessToken();
+        assertFalse("Access token should not be empty", userAccessToken.isEmpty());
     }
 
     @After
     public void tearDown() {
-        if (createdUser.getAccessToken() != null)
-            userCheck.deletedSuccessfully(userClient.deleteUser(createdUser.getAccessToken()));
+        deleteUser();
     }
 
     @Test
@@ -71,5 +69,15 @@ public class LoginUserTest {
                 .statusCode(HTTP_UNAUTHORIZED)
                 .and()
                 .body(MESSAGE_JSON_KEY, equalTo(INCORRECT_CREDENTIALS_MESSAGE));
+    }
+
+    private AuthorizedUserData createUser() {
+        userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
+        return userCheck.createdSuccessfully(userClient.createUser(userData));
+    }
+
+    private void deleteUser() {
+        if (userAccessToken != null)
+            userCheck.deletedSuccessfully(userClient.deleteUser(userAccessToken));
     }
 }

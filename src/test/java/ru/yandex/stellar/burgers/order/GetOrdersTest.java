@@ -34,14 +34,14 @@ public class GetOrdersTest {
     @Before
     public void setUp() {
         createUser();
+
         int ordersCount = RandomUtils.nextInt(1, 3);
         createOrders(ordersCount);
     }
 
     @After
     public void tearDown() {
-        if (userAccessToken != null)
-            userCheck.deletedSuccessfully(userClient.deleteUser(userAccessToken));
+        deleteUser();
     }
 
     @Test
@@ -60,6 +60,11 @@ public class GetOrdersTest {
                 .statusCode(HTTP_UNAUTHORIZED)
                 .and().body(SUCCESS_JSON_KEY, equalTo(false))
                 .and().body(MESSAGE_JSON_KEY, equalTo(UNAUTHORIZED_USER_MESSAGE));
+    }
+
+    private void deleteUser() {
+        if (userAccessToken != null)
+            userCheck.deletedSuccessfully(userClient.deleteUser(userAccessToken));
     }
 
     private void createOrders(int ordersCount) {
