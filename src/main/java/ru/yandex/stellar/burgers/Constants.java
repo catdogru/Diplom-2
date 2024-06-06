@@ -25,6 +25,7 @@ public interface Constants {
         String UNAUTHORIZED_USER_MESSAGE = "You should be authorised";
         String EMAIL_ALREADY_IN_USE_MESSAGE = "User with such email already exists";
 
+        //data
         String DEFAULT_PASSWORD = "Qwerty12345";
         String DEFAULT_USER_NAME = "Тестовый Тест Тестович";
 
@@ -37,6 +38,12 @@ public interface Constants {
         // api path
         String CREATE_ORDER_PATH = API_PATH + "/orders";
         String GET_ORDERS_PATH = API_PATH + "/orders";
+
+        // response message
+        String INGREDIENT_MUST_BE_PROVIDED_MESSAGE = "Ingredient ids must be provided";
+
+        // data
+        String INVALID_INGREDIENT = "INVALID_INGREDIENT";
     }
 
     interface IngredientConstants {
