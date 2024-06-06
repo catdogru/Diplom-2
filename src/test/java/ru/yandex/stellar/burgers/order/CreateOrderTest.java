@@ -1,5 +1,6 @@
 package ru.yandex.stellar.burgers.order;
 
+import io.qameta.allure.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +52,7 @@ public class CreateOrderTest {
     }
 
     @Test
+    @Description("Create order, check creation status and order number")
     public void createdSuccessfully() {
         Ingredients randomIngredients = new Ingredients(collectRandomIngredientList(availableIngredients));
         OrderData createdOrder = orderCheck.createdSuccessfully(orderClient.createOrder(randomIngredients, userAccessToken));
@@ -60,6 +62,7 @@ public class CreateOrderTest {
 
     // Согласно документации только авторизованные пользователи могут делать заказы
     @Test
+    @Description("Create order as unauthorized user and check unauthorized status")
     public void createAsUnauthorizedUser() {
         Ingredients randomIngredients = new Ingredients(collectRandomIngredientList(availableIngredients));
         orderClient
@@ -69,6 +72,7 @@ public class CreateOrderTest {
     }
 
     @Test
+    @Description("Create order without ingredients and check error message")
     public void createWithoutIngredients() {
         orderClient
                 .createOrder(null, userAccessToken)
@@ -79,6 +83,7 @@ public class CreateOrderTest {
     }
 
     @Test
+    @Description("Create order with invalid ingredient and check internal error status")
     public void createWithUnknownIngredient() {
         orderClient
                 .createOrder(new Ingredients(of(INVALID_INGREDIENT)), userAccessToken)

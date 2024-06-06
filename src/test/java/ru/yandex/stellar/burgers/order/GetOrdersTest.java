@@ -1,5 +1,6 @@
 package ru.yandex.stellar.burgers.order;
 
+import io.qameta.allure.Description;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -45,6 +46,7 @@ public class GetOrdersTest {
     }
 
     @Test
+    @Description("Get user orders and check success status")
     public void getUserOrders() {
         orderClient
                 .getOrders(userAccessToken)
@@ -53,6 +55,7 @@ public class GetOrdersTest {
     }
 
     @Test
+    @Description("Get orders as unauthorized user and check error message")
     public void getOrdersWithoutAuthorization() {
         orderClient
                 .getOrders(null)

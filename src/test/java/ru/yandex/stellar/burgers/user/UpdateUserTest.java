@@ -1,5 +1,6 @@
 package ru.yandex.stellar.burgers.user;
 
+import io.qameta.allure.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +10,8 @@ import ru.yandex.stellar.burgers.model.user.AuthorizedUserData.User;
 import ru.yandex.stellar.burgers.model.user.UserData;
 import ru.yandex.stellar.burgers.service.check.UserCheck;
 
-import static java.net.HttpURLConnection.*;
+import static java.net.HttpURLConnection.HTTP_FORBIDDEN;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,54 +40,30 @@ public class UpdateUserTest {
     }
 
     @Test
+    @Description("Try to update all user data and check updated fields")
     public void updateAll() {
         UserData newUserData = new UserData(
                 beforeUpdateUserData.getEmail() + "_1",
                 beforeUpdateUserData.getPassword() + "_1",
                 beforeUpdateUserData.getName() + "_1"
         );
-
-        User updatedUser = userClient
-                .updateUser(newUserData, userForUpdate.getAccessToken())
-                .assertThat()
-                .statusCode(HTTP_OK)
-                .body(SUCCESS_JSON_KEY, equalTo(true))
-                .extract()
-                .body().as(AuthorizedUserData.class)
-                .getUser();
-
+        User updatedUser = userCheck.updatedSuccessfully(userClient.updateUser(newUserData, userForUpdate.getAccessToken()));
         assertEquals(newUserData.getEmail().toLowerCase(), updatedUser.getEmail().toLowerCase());
         assertEquals(newUserData.getName(), updatedUser.getName());
     }
 
     @Test
+    @Description("Try to update user email and check updated field")
     public void updateEmail() {
-        UserData newUserData = new UserData(
-                userForUpdate.getUser().getEmail() + "_1",
-                null,
-                null
-        );
-
-        User updatedUser = userClient
-                .updateUser(newUserData, userForUpdate.getAccessToken())
-                .assertThat()
-                .statusCode(HTTP_OK)
-                .body(SUCCESS_JSON_KEY, equalTo(true))
-                .extract()
-                .body().as(AuthorizedUserData.class)
-                .getUser();
-
+        UserData newUserData = new UserData(userForUpdate.getUser().getEmail() + "_1", null, null);
+        User updatedUser = userCheck.updatedSuccessfully(userClient.updateUser(newUserData, userForUpdate.getAccessToken()));
         assertEquals(newUserData.getEmail().toLowerCase(), updatedUser.getEmail().toLowerCase());
     }
 
     @Test
+    @Description("Try to update user email with existing value and check error message")
     public void updateEmailWithExistingValue() {
-        UserData newUserData = new UserData(
-                anotherExistingUser.getUser().getEmail(),
-                null,
-                null
-        );
-
+        UserData newUserData = new UserData(anotherExistingUser.getUser().getEmail(), null, null);
         userClient
                 .updateUser(newUserData, userForUpdate.getAccessToken())
                 .assertThat()
@@ -95,26 +73,15 @@ public class UpdateUserTest {
     }
 
     @Test
+    @Description("Try to update user name and check updated field")
     public void updateName() {
-        UserData newUserData = new UserData(
-                null,
-                null,
-                userForUpdate.getUser().getName() + "_1"
-        );
-
-        User updatedUser = userClient
-                .updateUser(newUserData, userForUpdate.getAccessToken())
-                .assertThat()
-                .statusCode(HTTP_OK)
-                .body(SUCCESS_JSON_KEY, equalTo(true))
-                .extract()
-                .body().as(AuthorizedUserData.class)
-                .getUser();
-
+        UserData newUserData = new UserData(null, null, userForUpdate.getUser().getName() + "_1");
+        User updatedUser = userCheck.updatedSuccessfully(userClient.updateUser(newUserData, userForUpdate.getAccessToken()));
         assertEquals(newUserData.getName(), updatedUser.getName());
     }
 
     @Test
+    @Description("Try to update all user data as unauthorized user and check error message")
     public void updateAllWithoutAuthorization() {
         UserData newUserData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME + "1");
         userClient
@@ -126,6 +93,7 @@ public class UpdateUserTest {
     }
 
     @Test
+    @Description("Try to update email as unauthorized user and check error message")
     public void updateEmailWithoutAuthorization() {
         UserData newUserData = new UserData(generateRandomEmail(), null, null);
         userClient
@@ -137,6 +105,7 @@ public class UpdateUserTest {
     }
 
     @Test
+    @Description("Try to update name as unauthorized user and check error message")
     public void updateNameWithoutAuthorization() {
         UserData newUserData = new UserData(null, null, DEFAULT_USER_NAME + "1");
         userClient

@@ -1,5 +1,6 @@
 package ru.yandex.stellar.burgers.user;
 
+import io.qameta.allure.Description;
 import org.junit.After;
 import org.junit.Test;
 import ru.yandex.stellar.burgers.client.UserClient;
@@ -26,6 +27,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @Description("Create user and check authorization data")
     public void createdSuccessfully() {
         UserData userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
         AuthorizedUserData createdUser = userCheck.createdSuccessfully(userClient.createUser(userData));
@@ -38,6 +40,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @Description("Try to create identical users and check error message")
     public void createExistingUser() {
         UserData userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
 
@@ -53,6 +56,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @Description("Try to create user without email and check error message")
     public void createWithoutEmail() {
         UserData userData = new UserData(null, DEFAULT_PASSWORD, DEFAULT_USER_NAME);
         userClient
@@ -64,6 +68,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @Description("Try to create user without password and check error message")
     public void createWithoutPassword() {
         UserData userData = new UserData(generateRandomEmail(), null, DEFAULT_USER_NAME);
         userClient
@@ -75,6 +80,7 @@ public class CreateUserTest {
     }
 
     @Test
+    @Description("Try to create user without name and check error message")
     public void createWithoutName() {
         UserData userData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, null);
         userClient

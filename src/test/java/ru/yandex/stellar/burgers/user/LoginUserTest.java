@@ -1,5 +1,6 @@
 package ru.yandex.stellar.burgers.user;
 
+import io.qameta.allure.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,7 @@ public class LoginUserTest {
     }
 
     @Test
+    @Description("Create and log in user, check logged in user authorization data is not empty")
     public void loggedInSuccessfully() {
         UserCredentials userCredentials = new UserCredentials(userData.getEmail(), userData.getPassword());
         AuthorizedUserData response = userClient
@@ -50,6 +52,7 @@ public class LoginUserTest {
     }
 
     @Test
+    @Description("Try to login with invalid email and check error message")
     public void loginWithIncorrectEmail() {
         UserCredentials userCredentials = new UserCredentials(userData.getEmail() + "_incorrect", userData.getPassword());
         userClient
@@ -61,6 +64,7 @@ public class LoginUserTest {
     }
 
     @Test
+    @Description("Try to login with invalid password and check error message")
     public void loginWithIncorrectPassword() {
         UserCredentials userCredentials = new UserCredentials(userData.getEmail(), userData.getPassword() + "_incorrect");
         userClient
