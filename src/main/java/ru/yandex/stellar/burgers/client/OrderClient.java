@@ -15,9 +15,9 @@ public class OrderClient extends RestAssuredClient {
     public ValidatableResponse createOrder(Ingredients ingredients, String token) {
         RequestSpecification specification = createRequestSpecification();
         if (token != null && !token.isEmpty()) specification.header(AUTHORIZATION.getValue(), token);
+        if (ingredients != null) specification.body(ingredients);
         return specification
                 .contentType(JSON)
-                .body(ingredients)
                 .when()
                 .post(CREATE_ORDER_PATH)
                 .then()

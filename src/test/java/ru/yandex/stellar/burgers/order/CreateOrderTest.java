@@ -16,9 +16,15 @@ import ru.yandex.stellar.burgers.service.check.UserCheck;
 
 import java.util.List;
 
-import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static java.net.HttpURLConnection.*;
+import static java.util.List.of;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static ru.yandex.stellar.burgers.Constants.MESSAGE_JSON_KEY;
+import static ru.yandex.stellar.burgers.Constants.OrderConstants.INGREDIENT_MUST_BE_PROVIDED_MESSAGE;
+import static ru.yandex.stellar.burgers.Constants.OrderConstants.INVALID_INGREDIENT;
+import static ru.yandex.stellar.burgers.Constants.SUCCESS_JSON_KEY;
 import static ru.yandex.stellar.burgers.Constants.UserConstants.*;
 import static ru.yandex.stellar.burgers.model.ingredient.Ingredients.collectRandomIngredientList;
 
@@ -55,7 +61,7 @@ public class CreateOrderTest {
         assertNotNull("Order number should not be null", createdOrder.getOrder().getNumber());
     }
 
-    // Только авторизованные пользователи могут делать заказы
+    // Согласно документации только авторизованные пользователи могут делать заказы
     @Test
     public void createAsUnauthorizedUser() {
         Ingredients randomIngredients = new Ingredients(collectRandomIngredientList(availableIngredients));
@@ -67,20 +73,19 @@ public class CreateOrderTest {
 
     @Test
     public void createWithoutIngredients() {
-
+        orderClient
+                .createOrder(null, userAccessToken)
+                .assertThat()
+                .statusCode(HTTP_BAD_REQUEST)
+                .and().body(SUCCESS_JSON_KEY, equalTo(false))
+                .and().body(MESSAGE_JSON_KEY, equalTo(INGREDIENT_MUST_BE_PROVIDED_MESSAGE));
     }
 
     @Test
     public void createWithUnknownIngredient() {
-
+        orderClient
+                .createOrder(new Ingredients(of(INVALID_INGREDIENT)), userAccessToken)
+                .assertThat()
+                .statusCode(HTTP_INTERNAL_ERROR);
     }
 }
-/*
-Создание заказа:
-
-    с авторизацией,
-    без авторизации,
-    с ингредиентами,
-    без ингредиентов,
-    с неверным хешем ингредиентов.
- */

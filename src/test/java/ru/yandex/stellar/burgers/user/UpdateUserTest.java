@@ -20,12 +20,13 @@ import static ru.yandex.stellar.burgers.Constants.UserConstants.*;
 public class UpdateUserTest {
     private final UserClient userClient = new UserClient();
     private final UserCheck userCheck = new UserCheck();
+    private UserData beforeUpdateUserData;
     private AuthorizedUserData userForUpdate;
     private AuthorizedUserData anotherExistingUser;
 
     @Before
     public void setUp() {
-        UserData beforeUpdateUserData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
+        beforeUpdateUserData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
         userForUpdate = userCheck.createdSuccessfully(userClient.createUser(beforeUpdateUserData));
 
         UserData anotherUserData = new UserData(generateRandomEmail(), DEFAULT_PASSWORD, DEFAULT_USER_NAME);
@@ -45,11 +46,11 @@ public class UpdateUserTest {
     }
 
     @Test
-    public void updateEmailAndName() {
+    public void updateAll() {
         UserData newUserData = new UserData(
-                userForUpdate.getUser().getEmail() + "_1",
-                null,
-                userForUpdate.getUser().getName() + "_1"
+                beforeUpdateUserData.getEmail() + "_1",
+                beforeUpdateUserData.getPassword() + "_1",
+                beforeUpdateUserData.getName() + "_1"
         );
 
         User updatedUser = userClient
