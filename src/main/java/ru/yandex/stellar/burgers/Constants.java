@@ -10,6 +10,9 @@ public interface Constants {
     String SUCCESS_JSON_KEY = "success";
     String MESSAGE_JSON_KEY = "message";
 
+    // common messages
+    String UNAUTHORIZED_USER_MESSAGE = "You should be authorised";
+
     interface UserConstants {
         // api path
         String CREATE_USER_PATH = API_PATH + "/auth/register";
@@ -22,7 +25,6 @@ public interface Constants {
         String EMPTY_REQUIRED_FIELD_MESSAGE = "Email, password and name are required fields";
         String USER_REMOVED_MESSAGE = "User successfully removed";
         String INCORRECT_CREDENTIALS_MESSAGE = "email or password are incorrect";
-        String UNAUTHORIZED_USER_MESSAGE = "You should be authorised";
         String EMAIL_ALREADY_IN_USE_MESSAGE = "User with such email already exists";
 
         //data
